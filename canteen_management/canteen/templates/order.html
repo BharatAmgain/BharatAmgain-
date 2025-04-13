@@ -1,0 +1,66 @@
+<!-- order.html -->
+{% extends 'base.html' %}
+
+{% block title %}Place Order{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            {% if food_item.image %}
+            <img src="{{ food_item.image.url }}" class="card-img-top" alt="{{ food_item.name }}">
+            {% else %}
+            <div class="text-center py-5 bg-light">
+                <i class="bi bi-image fs-1 text-muted"></i>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <h2 class="card-title">{{ food_item.name }}</h2>
+                <p class="card-text">{{ food_item.description }}</p>
+                <p class="h4 text-primary">Price: NPR{{ food_item.price }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3>Place Your Order</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+    <label class="form-label">Quantity</label>
+    <input type="number" name="quantity" class="form-control" value="1" min="1" id="id_quantity">
+</div>
+
+                    <div class="mb-3">
+    <label class="form-label">Unit Price</label>
+    <div class="form-control-plaintext">NPR {{ food_item.price }}</div>
+</div>
+
+                    <div class="mb-3">
+    <label class="form-label">Total Price</label>
+    <div class="form-control-plaintext" id="total-price">
+        NPR {{ food_item.price }}
+    </div>
+</div>
+
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">Confirm Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('id_quantity').addEventListener('input', function() {
+    const quantity = parseInt(this.value) || 1;
+    const unitPrice = parseFloat({{ food_item.price }});
+    document.getElementById('total-price').textContent = 'NPR ' + (quantity * unitPrice).toFixed(2);
+});
+</script>
+{% endblock %}

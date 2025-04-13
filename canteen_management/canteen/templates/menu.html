@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Menu{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Our Menu</h1>
+<p class="lead mb-5">Welcome to {{ college_name }} Canteen. Browse our delicious offerings below.</p>
+
+{% for category in categories %}
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h2>{{ category.name }}</h2>
+        {% if category.description %}
+        <p class="mb-0">{{ category.description }}</p>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for item in category.fooditem_set.all %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="text-center py-5 bg-light">
+                        <i class="bi bi-image fs-1 text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.name }}</h5>
+                        <p class="card-text">{{ item.description|truncatechars:100 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 text-primary">NPR{{ item.price }}</span>
+                            {% if item.available %}
+                            <a href="{% url 'place_order' item.id %}" class="btn btn-primary">Order Now</a>
+                            {% else %}
+                            <button class="btn btn-secondary" disabled>Out of Stock</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
